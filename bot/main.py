@@ -22,17 +22,20 @@ def token_message(message):
             }
     HEADERS = {'Authorization':"Bearer "+str(message.text)}
     r = requests.post(url = URL, headers = HEADERS, data=DATA)
-    detail = r.json()['detail']
-    answer=str
-    if detail == "You already registered":
-        answer="Вы уже указали свой token"
-    elif detail == "Given token not valid for any token type":
-        answer="Ваш token не валидный"
-    elif detail == "This user is used by other telegram account":
-        answer="На этот телеграм аккаунт уже привязан другой token"
+    if r.status_code==201:
+        answer="Спасибо что используюте этот сервис, ваш аккаунт сохранен"
     else:
-        msg="Спасибо что используюте этот сервис, ваш аккаунт сохранен"
+        detail = r.json()['detail']
+        answer=str
+        if detail == "You already registered":
+            answer="Вы уже указали свой token"
+        elif detail == "Given token not valid for any token type":
+            answer="Ваш token не валидный"
+        elif detail == "This user is used by other telegram account":
+            answer="На этот телеграм аккаунт уже привязан другой token"
+        else:
+            answer="Спасибо что используюте этот сервис, ваш аккаунт сохранен"
     bot.reply_to(message, answer)
-    
+    print(chat_id)
 
 bot.infinity_polling()
